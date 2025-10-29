@@ -1,3 +1,2 @@
 # myhomepage
-명신여자고등학교 김리윤의 홈페이지
-나의 홈페이지 입니다
+https://riyun09.github.io/myhomepage/mbti.html
