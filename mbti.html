@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 하츄핑의 이상형 테스트 💖</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700;900&display=swap');
+        
+        /* 커스텀 스타일 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #f0f9ff 100%); /* 밝고 부드러운 배경 */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 600px;
+            width: 100%;
+            background-color: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 1.5rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* 티니핑 테마 버튼 스타일 */
+        .choice-button {
+            transition: all 0.2s;
+            transform-origin: center;
+            box-shadow: 0 4px #ea580c; /* 버튼 아래 그림자 */
+            font-weight: 700;
+        }
+
+        .choice-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px #ea580c;
+        }
+
+        .choice-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #ea580c;
+        }
+
+        /* 하츄핑 타이틀 스타일 */
+        .hachuping-title {
+            font-family: 'Jua', sans-serif;
+            color: #ec4899; /* 핑크 */
+            text-shadow: 3px 3px 0 #f9a8d4; /* 밝은 핑크 그림자 */
+            line-height: 1.2;
+        }
+
+        /* 결과 카드 배경 */
+        .result-card-bg {
+            background: linear-gradient(45deg, #fbcfe8, #f0abfc);
+            padding: 1.5rem;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container" id="app">
+        <!-- 타이틀 및 상태 표시줄 -->
+        <header class="text-center mb-6">
+            <h1 class="hachuping-title text-5xl sm:text-6xl mb-2">💖 하츄핑의 이상형 테스트 💖</h1>
+            <p id="status-text" class="text-lg font-bold text-purple-600">준비! 시작 버튼을 눌러주세요!</p>
+        </header>
+
+        <!-- 1. 시작 화면 -->
+        <div id="start-screen" class="text-center p-8">
+            <div class="text-6xl mb-6 animate-pulse">✨</div>
+            <p class="text-xl mb-8 text-gray-700 font-medium">
+                친절한 하츄핑이 나에게 딱 맞는 최고의 친구 타입을 찾아줄 거예요! 
+                솔직하게 답변하고 결과를 확인해 보세요!
+            </p>
+            <button id="start-button" class="px-8 py-4 bg-pink-500 text-white rounded-full text-2xl font-bold choice-button hover:bg-pink-600">
+                테스트 시작!
+            </button>
+        </div>
+
+        <!-- 2. 퀴즈 화면 -->
+        <div id="quiz-screen" class="hidden">
+            <div class="mb-6">
+                <p id="question-count" class="text-center text-sm font-semibold text-pink-500 mb-2"></p>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progress-bar" class="bg-pink-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-purple-100 rounded-xl mb-6 border-4 border-purple-300">
+                <p id="question-text" class="text-xl sm:text-2xl font-extrabold text-purple-800 text-center">질문 내용이 여기에 표시됩니다.</p>
+            </div>
+
+            <div id="choices-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 선택지 버튼들이 여기에 삽입됩니다. -->
+            </div>
+        </div>
+
+        <!-- 3. 결과 화면 -->
+        <div id="result-screen" class="hidden text-center p-6">
+            <div class="result-card-bg">
+                <div class="text-8xl mb-4 animate-bounce" id="result-emoji">💖</div>
+                <h2 id="result-title" class="hachuping-title text-4xl mb-4">결과 제목</h2>
+                <p id="result-description" class="text-lg text-gray-800 mb-6 font-medium">
+                    결과 설명이 여기에 표시됩니다.
+                </p>
+            </div>
+
+            <button id="restart-button" class="mt-8 px-8 py-3 bg-blue-500 text-white rounded-full text-xl font-bold choice-button hover:bg-blue-600">
+                다시 테스트하기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- 퀴즈 데이터 ---
+        const QUIZ_DATA = [
+            {
+                q: "친구와 놀 때 가장 좋아하는 것은 무엇인가요?",
+                choices: [
+                    { text: "같이 예쁜 사진을 찍고 서로 칭찬해 주기", type: 'A' },
+                    { text: "계획을 짜서 숙제를 도와주거나 정리정돈하기", type: 'B' },
+                    { text: "신나는 보드게임이나 운동으로 에너지를 발산하기", type: 'C' },
+                    { text: "서로의 고민을 조용히 들어주며 마음 나누기", type: 'D' }
+                ]
+            },
+            {
+                q: "가장 마음에 드는 색깔을 골라주세요.",
+                choices: [
+                    { text: "💖 사랑스러운 분홍색 (Hachu-ping Pink)", type: 'A' },
+                    { text: "💙 똑똑한 파란색 (Baro-ping Blue)", type: 'B' },
+                    { text: "💛 활기찬 노란색 (Aja-ping Yellow)", type: 'C' },
+                    { text: "💜 신비로운 보라색 (Mideo-ping Purple)", type: 'D' }
+                ]
+            },
+            {
+                q: "다툼이 생겼을 때 나의 행동은?",
+                choices: [
+                    { text: "먼저 웃으며 화해하자고 손 내밀기", type: 'A' },
+                    { text: "논리적으로 누가 왜 잘못했는지 차분하게 설명하기", type: 'B' },
+                    { text: "괜찮아! 다음에 더 신나게 놀자고 크게 외치기", type: 'C' },
+                    { text: "잠시 시간을 갖고 상대방의 마음을 먼저 이해하기", type: 'D' }
+                ]
+            },
+            {
+                q: "주말에 가장 하고 싶은 일은?",
+                choices: [
+                    { text: "달콤한 간식을 만들거나 작은 파티 열기", type: 'A' },
+                    { text: "방을 깔끔하게 정리하고 해야 할 일 목록 만들기", type: 'B' },
+                    { text: "친구들과 밖에서 모험을 하거나 뛰어놀기", type: 'C' },
+                    { text: "따뜻한 곳에서 조용히 쉬면서 생각 정리하기", type: 'D' }
+                ]
+            },
+            {
+                q: "나는 어떤 친구가 되었으면 좋겠니?",
+                choices: [
+                    { text: "항상 따뜻한 마음을 나누고 응원하는 친구", type: 'A' },
+                    { text: "약속을 잘 지키고 믿음직한 모범적인 친구", type: 'B' },
+                    { text: "모두에게 에너지를 주는 활발한 분위기 메이커 친구", type: 'C' },
+                    { text: "힘든 순간에도 옆을 지켜주는 든든한 조언자 친구", type: 'D' }
+                ]
+            }
+        ];
+
+        // --- 결과 데이터 ---
+        const RESULTS = {
+            'A': {
+                title: "💖 하츄핑 타입 💖",
+                emoji: "💖",
+                color: "text-pink-600",
+                description: "당신은 사랑과 다정함이 넘치는 하츄핑 타입! 당신의 이상형은 주변을 행복하게 만들고, 당신의 따뜻한 마음을 소중히 여겨주는 친구랍니다. 언제나 서로 사랑을 나누며 예쁜 추억을 만들 친구와 가장 잘 맞을 거예요!"
+            },
+            'B': {
+                title: "💎 바로핑 타입 💎",
+                emoji: "💎",
+                color: "text-blue-600",
+                description: "당신은 똑똑하고 바른 바로핑 타입! 당신의 이상형은 약속을 잘 지키고, 계획적이며 질서를 중요하게 생각하는 믿음직한 친구랍니다. 함께 규칙을 지키며 배우고 성장하는 관계를 가장 좋아할 거예요!"
+            },
+            'C': {
+                title: "🌟 아자핑 타입 🌟",
+                emoji: "🌟",
+                color: "text-yellow-600",
+                description: "당신은 활기차고 용감한 아자핑 타입! 당신의 이상형은 당신만큼 에너지 넘치고 긍정적인 친구랍니다. 함께 신나는 도전을 하고, 어려움이 있어도 '아자!'하고 외치며 극복할 수 있는 친구와 잘 맞을 거예요!"
+            },
+            'D': {
+                title: "🔒 믿어핑 타입 🔒",
+                emoji: "🔒",
+                color: "text-purple-600",
+                description: "당신은 침착하고 신뢰를 주는 믿어핑 타입! 당신의 이상형은 조용하지만 속이 깊고, 당신의 이야기를 귀 기울여 들어주는 사려 깊은 친구랍니다. 서로를 깊이 이해하며 든든한 마음의 버팀목이 되어줄 친구를 찾게 될 거예요!"
+            }
+        };
+
+        // --- 게임 상태 변수 ---
+        let currentQuestionIndex = 0;
+        let scores = { 'A': 0, 'B': 0, 'C': 0, 'D': 0 };
+
+        // --- DOM 요소 ---
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCount = document.getElementById('question-count');
+        const statusText = document.getElementById('status-text');
+
+        // --- 이벤트 리스너 설정 ---
+        document.getElementById('start-button').addEventListener('click', startQuiz);
+        document.getElementById('restart-button').addEventListener('click', resetQuiz);
+
+        // --- 퀴즈 시작 ---
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            resultScreen.classList.add('hidden');
+            currentQuestionIndex = 0;
+            scores = { 'A': 0, 'B': 0, 'C': 0, 'D': 0 };
+            statusText.textContent = "테스트 진행 중!";
+            loadQuestion();
+        }
+
+        // --- 질문 로드 및 UI 업데이트 ---
+        function loadQuestion() {
+            if (currentQuestionIndex >= QUIZ_DATA.length) {
+                showResult();
+                return;
+            }
+
+            const currentQ = QUIZ_DATA[currentQuestionIndex];
+            
+            // 질문 내용 업데이트
+            questionText.textContent = currentQ.q;
+            
+            // 질문 카운트 및 진행률 업데이트
+            questionCount.textContent = `Q. ${currentQuestionIndex + 1} / ${QUIZ_DATA.length}`;
+            const progress = ((currentQuestionIndex) / QUIZ_DATA.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // 선택지 버튼 생성 및 이벤트 바인딩
+            choicesContainer.innerHTML = '';
+            currentQ.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.textContent = choice.text;
+                button.classList.add(
+                    'choice-button', 'w-full', 'p-4', 'rounded-xl', 'bg-red-400', 
+                    'text-white', 'text-lg', 'text-left', 'hover:bg-red-500'
+                );
+                
+                // 버튼 색상 테마 적용 (랜덤 섞기 위해 인덱스 기반으로 색상 부여)
+                const colorIndex = Math.floor(Math.random() * 4);
+                let colorClasses = '';
+                switch (colorIndex) {
+                    case 0: colorClasses = 'bg-pink-500 hover:bg-pink-600 shadow-[0_4px_#db2777] active:shadow-[0_2px_#db2777]'; break; // 핑크 (Hachu)
+                    case 1: colorClasses = 'bg-blue-500 hover:bg-blue-600 shadow-[0_4px_#2563eb] active:shadow-[0_2px_#2563eb]'; break; // 파랑 (Baro)
+                    case 2: colorClasses = 'bg-yellow-500 hover:bg-yellow-600 shadow-[0_4px_#ca8a04] active:shadow-[0_2px_#ca8a04]'; break; // 노랑 (Aja)
+                    case 3: colorClasses = 'bg-purple-500 hover:bg-purple-600 shadow-[0_4px_#7c3aed] active:shadow-[0_2px_#7c3aed]'; break; // 보라 (Mideo)
+                }
+                button.classList.remove('bg-red-400', 'hover:bg-red-500', 'shadow-[0_4px_#ea580c]', 'active:shadow-[0_2px_#ea580c]');
+                button.classList.add(...colorClasses.split(' '));
+
+                button.addEventListener('click', () => handleAnswer(choice.type));
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        // --- 답변 처리 ---
+        function handleAnswer(type) {
+            scores[type]++;
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        // --- 결과 화면 표시 ---
+        function showResult() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            statusText.textContent = "결과가 나왔어요!";
+            
+            // 최종 진행률 (100%) 표시
+            progressBar.style.width = `100%`;
+
+            // 최고 점수 타입 찾기
+            let highestScore = 0;
+            let resultType = '';
+            
+            // 점수가 동점일 경우, 먼저 등장한 타입(A, B, C, D 순서)을 우선합니다.
+            // 하지만 여기서는 가장 높은 점수를 얻은 타입을 찾습니다.
+            for (const type in scores) {
+                if (scores[type] > highestScore) {
+                    highestScore = scores[type];
+                    resultType = type;
+                }
+            }
+
+            // 결과를 찾지 못했을 경우 (5개 질문 모두 0점일 수는 없지만 안전 장치)
+            if (!resultType) {
+                resultType = 'A'; // 기본값은 하츄핑으로
+            }
+
+            const result = RESULTS[resultType];
+            
+            // 결과 UI 업데이트
+            document.getElementById('result-title').textContent = result.title;
+            document.getElementById('result-title').classList.remove('text-pink-600', 'text-blue-600', 'text-yellow-600', 'text-purple-600');
+            document.getElementById('result-title').classList.add(result.color);
+            document.getElementById('result-emoji').textContent = result.emoji;
+            document.getElementById('result-description').textContent = result.description;
+        }
+
+        // --- 퀴즈 리셋 ---
+        function resetQuiz() {
+            resultScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            statusText.textContent = "다시 한번 도전!";
+            progressBar.style.width = '0%';
+        }
+    </script>
+</body>
+</html>
