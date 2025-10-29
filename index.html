@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명신여고 1학년 코더의 포트폴리오</김리윤>
+    <!-- Google Fonts: Noto Sans KR for clean readability -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons for simple, modern icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* CSS Variables for Light/Dark Mode */
+        :root {
+            /* Light Mode Defaults */
+            --primary-color: #ff69b4; /* 핑크 (액센트) */
+            --secondary-color: #333;
+            --background-color: #f8f8f8;
+            --card-bg-color: #fff;
+            --text-color: #333;
+            --subtext-color: #666;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            /* Dark Mode Overrides */
+            --primary-color: #ff69b4; /* Accent stays bright */
+            --secondary-color: #eee;
+            --background-color: #1a1a2e; /* Deep blue/purple dark background */
+            --card-bg-color: #2c2c44;
+            --text-color: #eee;
+            --subtext-color: #b0b0b0;
+            --shadow-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 1. Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding-top: 60px; 
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for theme change */
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            opacity: 0.8;
+        }
+
+        /* 2. Header (Fixed and Responsive) */
+        .header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            margin-right: 20px;
+        }
+
+        .nav ul li {
+            margin-left: 20px;
+        }
+
+        .nav ul li a {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* 3. Theme Toggle Button */
+        #theme-toggle {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        #theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 4. Main Content Layout */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .section {
+            padding: 40px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--subtext-color);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* 5. Project Card Grid (Responsive) */
+        .project-grid {
+            display: grid;
+            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .project-card {
+            background-color: var(--card-bg-color);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            cursor: pointer; 
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for dark mode */
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px) scale(1.02); /* More noticeable interactive effect */
+            box-shadow: 0 12px 25px var(--shadow-color);
+        }
+
+        .project-card h3 {
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .project-card p {
+            font-size: 0.95rem;
+            color: var(--subtext-color);
+            margin-bottom: 15px;
+        }
+
+        .project-card .link-button {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: opacity 0.3s, background-color 0.3s;
+        }
+
+        .project-card .link-button:hover {
+            opacity: 0.9;
+        }
+
+        /* 6. Footer */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: var(--secondary-color);
+            color: #fff;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        /* 7. Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                padding: 1rem 5%;
+                height: auto;
+            }
+            .header h1 {
+                margin-bottom: 10px;
+            }
+            .nav-controls {
+                width: 100%;
+                justify-content: space-around;
+            }
+            .nav ul {
+                margin: 0;
+                padding: 0;
+                justify-content: center;
+            }
+            .nav ul li {
+                margin: 0 10px;
+            }
+            #theme-toggle {
+                position: absolute; /* Place toggle top right */
+                top: 10px;
+                right: 10px;
+            }
+            body {
+                padding-top: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 고정 반응형 헤더 -->
+    <header class="header">
+        <h1>✨ 코딩 명신인 포트폴리오</h1>
+        <div class="nav-controls">
+            <nav class="nav">
+                <ul>
+                    <li><a href="#about">소개</a></li>
+                    <li><a href="#projects">프로젝트</a></li>
+                    <li><a href="#contact">연락</a></li>
+                </ul>
+            </nav>
+            <!-- 다크 모드 토글 버튼 (인터랙티브 요소) -->
+            <button id="theme-toggle" aria-label="테마 전환 버튼">
+                <i data-lucide="moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. 메인 콘텐츠 영역 -->
+    <div class="container">
+        
+        <!-- 소개 섹션 -->
+        <section id="about" class="section">
+            <h2>👋 명신여고 1학년 코더</h2>
+            <p style="text-align: center;">명신여고의 자랑, 코딩을 가장 좋아하는 김리윤입니다! 앱과 챗봇을 만드는 것을 즐기며, 기술을 통해 세상을 이롭게 할 코드를 짜는 개발자가 되는 것이 꿈입니다. </p>
+            <div style="text-align: center; margin-top: 20px;">
+                <p><strong>사용 가능 언어/기술:</strong> Python, JavaScript, HTML/CSS, C++</p>
+            </div>
+        </section>
+
+        <!-- 프로젝트 섹션 -->
+        <section id="projects" class="section">
+            <h2>🚀 나의 코딩 작품</h2>
+            <div class="project-grid">
+                
+                <!-- 프로젝트 카드 1: 챗봇 -->
+                <div class="project-card">
+                    <h3>챗봇: 명신여고 급식 도우미</h3>
+                    <p>Python Flask와 KakaoTalk API를 활용하여 만든 챗봇입니다. 오늘의 급식 메뉴와 학교 공지사항을 실시간으로 알려줍니다. </p>
+                    <a href="#" target="_blank" class="link-button">프로젝트 상세 보기</a>
+                </div>
+
+                <!-- 프로젝트 카드 2: 앱 -->
+                <div class="project-card">
+                    <h3>반응형 앱: 1학년 스터디 플래너</h3>
+                    <p>JavaScript(React)로 개발한 반응형 웹 앱입니다. 주간 목표 설정과 시간 관리를 돕는 개인 맞춤형 플래너입니다.</p>
+                    <a href="#" target="_blank" class="link-button">프로젝트 상세 보기</a>
+                </div>
+
+                <!-- 프로젝트 카드 3: 웹사이트 -->
+                <div class="project-card">
+                    <h3>웹사이트: AI 융합교육 포럼</h3>
+                    <p>AI 융합교육 중심학교 활동의 일환으로 제작한 웹 페이지입니다. CSS 애니메이션을 활용하여 시각적 완성도를 높였습니다.</p>
+                    <a href="#" target="_blank" class="link-button">프로젝트 상세 보기</a>
+                </div>
+                
+                <!-- 프로젝트 카드 4: 추가 작품 -->
+                 <div class="project-card">
+                    <h3>게임: 터미널 기반 미로 찾기</h3>
+                    <p>C++로 구현한 텍스트 기반 콘솔 게임입니다. 알고리즘과 자료구조를 응용하여 최단 경로 탐색 기능을 넣었습니다.</p>
+                    <a href="#" target="_blank" class="link-button">코드 보러가기</a>
+                </div>
+
+                <!-- 필요하다면 프로젝트 카드를 계속 추가해 보세요! -->
+            </div>
+        </section>
+
+        <!-- 연락처 섹션 -->
+        <section id="contact" class="section">
+            <h2>📞 함께 이야기 나눠요</h2>
+            <p style="text-align: center;">저의 작품에 관심이 있거나 코딩에 대해 궁금한 점이 있다면 언제든지 연락 주세요! 성실하고 똑똑한 명신여고 코더는 언제나 열려 있습니다.</p>
+            <div style="text-align: center; margin-top: 20px;">
+                <p><strong>이메일:</strong> your_email@example.com</p>
+                <p><strong>GitHub:</strong> <a href="#" target="_blank">github.com/your-username</a></p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 3. 푸터 -->
+    <footer class="footer">
+        <p>Proudly Coded by Myeongsin Girl's High School Coder &copy; 2025</p>
+    </footer>
+    
+    <!-- 4. JavaScript for Interactivity -->
+    <script>
+        // Lucide Icons (for theme toggle icon)
+        lucide.createIcons();
+
+        const body = document.body;
+        const toggleButton = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const storageKey = 'theme-preference';
+
+        // 1. 초기 로드 시 테마 설정 (로컬 저장소 확인)
+        function getPreferredTheme() {
+            // 로컬 저장소에 저장된 값이 있다면 사용
+            if (localStorage.getItem(storageKey)) {
+                return localStorage.getItem(storageKey);
+            }
+            // 없다면 시스템 설정을 따름
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function setTheme(theme) {
+            // 2. 테마 클래스 및 아이콘 업데이트
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeIcon.setAttribute('data-lucide', 'sun'); // Dark mode: Show sun icon
+            } else {
+                body.classList.remove('dark-mode');
+                themeIcon.setAttribute('data-lucide', 'moon'); // Light mode: Show moon icon
+            }
+            // 아이콘 변경 후 Lucide 다시 렌더링
+            lucide.createIcons();
+            
+            // 3. 변경된 테마 로컬 저장소에 저장
+            localStorage.setItem(storageKey, theme);
+        }
+
+        // 페이지 로드 시 즉시 테마 적용
+        const initialTheme = getPreferredTheme();
+        setTheme(initialTheme);
+        
+        // 4. 버튼 클릭 이벤트 리스너
+        toggleButton.addEventListener('click', () => {
+            const currentTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        });
+
+    </script>
+</body>
+</html>
